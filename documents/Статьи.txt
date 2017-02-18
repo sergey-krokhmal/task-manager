@@ -1,0 +1,5 @@
+1. Репозиторий (Хранилище)
+https://habrahabr.ru/post/248505/
+
+2. PSR-autoloader
+https://github.com/php-fig/fig-standards/blob/master/accepted/PSR-4-autoloader-examples.md
