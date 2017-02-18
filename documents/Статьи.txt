@@ -3,3 +3,6 @@ https://habrahabr.ru/post/248505/
 
 2. PSR-autoloader
 https://github.com/php-fig/fig-standards/blob/master/accepted/PSR-4-autoloader-examples.md
+
+3. PSR-standarts (1, 2, 4)
+http://svyatoslav.biz/misc/psr_translation/
