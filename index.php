@@ -1,9 +1,9 @@
 <?php
-use Krokhmal\Tasker\Test;
+use Krokhmal\Soft\Tasker\Test;
 
 $loader = require (__DIR__ . '/vendor/autoload.php');
 
-$loader->addPsr4( 'Krokhmal\\', __DIR__ . '/lib/Krokhmal/');
+$loader->addPsr4( 'Krokhmal\\Soft\\', __DIR__ . '/lib/Krokhmal-Soft/');
 echo "<pre>";
 var_dump($loader);
 echo "</pre>";

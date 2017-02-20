@@ -1,5 +1,5 @@
 <?php
-namespace Krokhmal\Tasker;
+namespace Krokhmal\Soft\Tasker;
 
 class Test
 {
