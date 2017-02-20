@@ -1,6 +1,8 @@
 <?php
+namespace Krokhmal\Soft\Tasker;
 
-require_once "TaskStatus.php";
+use TaskStatus;
+use TaskPriority;
 
 class Task
 {
@@ -15,7 +17,7 @@ class Task
         $this->name = $name;
         $this->priority = $priority;
         $this->tags = $tags;
-        $status = TaskStatus::Active;
+        $status = TaskStatus::ACTIVE;
     }
     
     public function getName()
