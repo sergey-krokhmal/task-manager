@@ -12,7 +12,7 @@ class Task
     public $tags;
     public $status;
     
-    public function __construct($name, $priority, $tags)
+    public function __construct($id, $name, $priority, $tags)
     {
         $this->name = $name;
         $this->priority = $priority;
