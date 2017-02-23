@@ -5,6 +5,7 @@ use Krokhmal\Soft\Data\TaskRepository;
 
 class MysqlTaskRepository implements TaskRepository
 {
+    
     public function getAll()
     {
         $task1 = new Task('c8791555-b462-433b-925a-f8946bd608cd', 'task1', TaskPriority::LOW, array('test_tag'));

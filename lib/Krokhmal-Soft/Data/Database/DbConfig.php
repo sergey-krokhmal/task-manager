@@ -36,9 +36,9 @@ class DbConfig
             // Connection params for this connection
             'params' => array(
                 'host'			=>	'localhost',
-                'db_name'		=>	'test',
-                'user'			=>	'sergey',
-                'pass'			=>	'8kowalsky8',
+                'db_name'		=>	'task_manager',
+                'user'			=>	'tmuser',
+                'pass'			=>	'SbuBtKlUXtncBeyD',
                 'charset'		=>	'utf8',
                 'persistant'	=>	true
             )
