@@ -14,8 +14,12 @@ class MysqlTaskRepository implements TaskRepository
         $this->db = $db;
     }
     
+    /*function __destruct() {
+        if (isset($this->db)){             //Если было установленно соединение с базой, 
             echo "!!!!!!CLOSE!!!!!!!";
+            $this->db->closeConnection();  //то закрываем его когда наш класс больше не нужен
         }
+    }*/
     
     public function getAll()
     {
