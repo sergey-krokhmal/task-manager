@@ -1,7 +1,7 @@
 <?php
 namespace Krokhmal\Soft\Tasker;
 
-class TastStatus
+class TaskStatus
 {    
     const ACTIVE = 1;
     const DONE = 2;

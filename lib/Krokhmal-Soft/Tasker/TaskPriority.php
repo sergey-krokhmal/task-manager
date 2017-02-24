@@ -1,7 +1,7 @@
 <?php
 namespace Krokhmal\Soft\Tasker;
 
-class TastPriority
+class TaskPriority
 {    
     const LOW = 1;
     const MIDDLE = 2;
