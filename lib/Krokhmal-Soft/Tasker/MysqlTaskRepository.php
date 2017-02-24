@@ -14,6 +14,9 @@ class MysqlTaskRepository implements TaskRepository
         $this->db = $db;
     }
     
+            echo "!!!!!!CLOSE!!!!!!!";
+        }
+    
     public function getAll()
     {
         $task_arr = array();

@@ -48,7 +48,8 @@ abstract class DbDriver
 		return $arr;
 	}
 	
-	public function selectKeyArray($sql_query, $key){
+	public function selectKeyArray($sql_query, $key)
+    {
 		$this->executeQuery($sql_query); // Execute query
 		$arr = array();
 		while ($row = $this->row($this->resource)) {
@@ -57,7 +58,8 @@ abstract class DbDriver
 		return $arr;
 	}
 	
-	public function selectValueArray($sql_query, $value){
+	public function selectValueArray($sql_query, $value)
+    {
 		$this->executeQuery($sql_query); // Execute query
 		$arr = array();
 		while ($row = $this->row($this->resource)) {
@@ -66,7 +68,8 @@ abstract class DbDriver
 		return $arr;
 	}
 	
-	public function selectKeyValueArray($sql_query, $key, $value){
+	public function selectKeyValueArray($sql_query, $key, $value)
+    {
 		$this->executeQuery($sql_query); // Execute query
 		$arr = array();
 		while ($row = $this->row($this->resource)) {
@@ -76,7 +79,8 @@ abstract class DbDriver
 	}
 	
 	// Execute query with saving sql_query and result resource
-	protected function executeQuery($sql_query){
+	protected function executeQuery($sql_query)
+    {
 		$this->sql_query = $sql_query;				// Save last user sql query
 		$this->resource = $this->query($sql_query); // Execute query
 	}
@@ -106,6 +110,5 @@ abstract class DbDriver
 	
 	// Abstract closing of connection
 	abstract public function closeConnection();
-	
 }
 ?>
