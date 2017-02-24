@@ -14,30 +14,29 @@ class MysqlTaskRepository implements TaskRepository
         $this->db = $db;
     }
     
-    /*function __destruct() {
-        if (isset($this->db)){             //Если было установленно соединение с базой, 
-            echo "!!!!!!CLOSE!!!!!!!";
-            $this->db->closeConnection();  //то закрываем его когда наш класс больше не нужен
-        }
-    }*/
-    
     public function getAll()
     {
         $task_arr = array();
         $task_rows = $this->db->selectArray("SELECT * FROM `task` ORDER BY id_priority");
         foreach($task_rows as $task_row) {
+            $task_row['tags'] = explode('|', $task_row['tags']);
+            $task_row['status'] = $task_row['id_status'];
+            $task_row['priority'] = $task_row['id_priority'];
             $task_arr[] = Task::createFromAssoc($task_row);
         }
         return $task_arr;
     }
     
-    public function findById($task_id)
+    public function findById($uuid)
     {
-        if (is_string($task_id)) {
-            $task_row = $this->db->selectFirst("SELECT * FROM `task` WHERE uuid = '$task_id'");
+        if (is_string($uuid)) {
+            $task_row = $this->db->selectFirst("SELECT * FROM `task` WHERE uuid = '$uuid'");
             if ($task_row === false) {
                 return false;
             } else {
+                $task_row['tags'] = explode('|', $task_row['tags']);
+                $task_row['status'] = $task_row['id_status'];
+                $task_row['priority'] = $task_row['id_priority'];
                 $task = Task::createFromAssoc($task_row);
                 return $task;
             }
@@ -51,8 +50,8 @@ class MysqlTaskRepository implements TaskRepository
         if (!isset($task)) {
             return false;
         } else {
-            $task_id = $task->getId();
-            $task_row = $this->db->selectFirst("SELECT * FROM `task` WHERE uuid = '$task_id'");
+            $uuid = $task->getUuid();
+            $task_row = $this->db->selectFirst("SELECT * FROM `task` WHERE uuid = '$uuid'");
             $set_string = "
                 name = '".$task->getName()."',
                 id_priority = '".$task->getPriority()."',
@@ -62,14 +61,14 @@ class MysqlTaskRepository implements TaskRepository
             if ($task_row === false) {
                 $insert_sql = "
                     INSERT INTO `task` SET
-                    uuid = '".$task->getId()."', ".
+                    uuid = '".$uuid."', ".
                     $set_string;
                 $this->db->run($insert_sql);
             } else {
                 $update_sql = "
                     UPDATE `task` SET ".
                     $set_string.
-                    " WHERE uuid = '".$task->getId()."'";
+                    " WHERE uuid = '".$uuid."'";
                 $this->db->run($update_sql);
             }
             return true;
@@ -81,8 +80,14 @@ class MysqlTaskRepository implements TaskRepository
         if (!isset($task)) {
             return false;
         } else {
-            $task_id = $task->getId();
-            $this->db->run("DELETE FROM `task` WHERE uuid = '".$task->getId()."'");
+            $uuid = $task->getUuid();
+            $task = $this->findById($uuid);
+            if ($task === false) {
+                return false;
+            } else {
+                $this->db->run("DELETE FROM `task` WHERE uuid = '".$uuid."'");
+                return true;
+            }
         }
     }
 }

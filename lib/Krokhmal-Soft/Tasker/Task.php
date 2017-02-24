@@ -4,14 +4,14 @@ namespace Krokhmal\Soft\Tasker;
 class Task
 {
     private $name;
-    private $id;
+    private $uuid;
     private $priority;
     private $tags;
     private $status;
     
-    public function __construct($id, $name, $priority, $status, $tags)
+    public function __construct($uuid, $name, $priority, $status, $tags)
     {
-        $this->id = $id;
+        $this->uuid = $uuid;
         $this->name = $name;
         $this->priority = $priority;
         $this->tags = $tags;
@@ -23,11 +23,22 @@ class Task
         $task = new Task(
             $assoc['uuid'],
             $assoc['name'],
-            $assoc['id_priority'],
-            $assoc['id_status'],
-            explode('|',$assoc['tags'])
+            $assoc['priority'],
+            $assoc['status'],
+            $assoc['tags']
         );
         return $task;
+    }
+    
+    public function toAssoc()
+    {
+        $assoc = array();
+        $assoc['uuid'] = $this->uuid;
+        $assoc['name'] = $this->name;
+        $assoc['priority'] = $this->priority;
+        $assoc['status'] = $this->status;
+        $assoc['tags'] = $this->tags;
+        return $assoc;
     }
     
     public function getName()
@@ -35,9 +46,14 @@ class Task
         return $this->name;
     }
     
-    public function getId()
+    public function setName($name)
     {
-        return $this->id;
+       $this->name = $name;
+    }
+    
+    public function getUuid()
+    {
+        return $this->uuid;
     }
     
     public function getPriority()
