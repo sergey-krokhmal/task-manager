@@ -2,12 +2,17 @@
 use Krokhmal\Soft\Helpers\UUID;
 use Krokhmal\Soft\Tasker\Test;
 use Krokhmal\Soft\Tasker\MysqlTaskRepository;
-use Krokhmal\Soft\Data\Database\DbConfig;
+use Krokhmal\Soft\Data\Database\DbDriverPdo;
+use Krokhmal\Soft\Tasker\DbConfig;
 
-// Äîáàâèòü àâòîçàãðóç÷èê
+// Ð”Ð¾Ð±Ð°Ð²Ð¸Ñ‚ÑŒ Ð°Ð²Ñ‚Ð¾Ð·Ð°Ð³Ñ€ÑƒÐ·Ñ‡Ð¸Ðº
 $loader = require (__DIR__ . '/vendor/autoload.php');
-// Óñòàíîâêà ñîîòâåòñâèÿ ïðåôèêñà ïðîñòðàíñòâà èìåí ñ åãî áàçîâûì êàòàëîãîì
+// Ð£ÑÑ‚Ð°Ð½Ð¾Ð²ÐºÐ° ÑÐ¾Ð¾Ñ‚Ð²ÐµÑ‚ÑÐ²Ð¸Ñ Ð¿Ñ€ÐµÑ„Ð¸ÐºÑÐ° Ð¿Ñ€Ð¾ÑÑ‚Ñ€Ð°Ð½ÑÑ‚Ð²Ð° Ð¸Ð¼ÐµÐ½ Ñ ÐµÐ³Ð¾ Ð±Ð°Ð·Ð¾Ð²Ñ‹Ð¼ ÐºÐ°Ñ‚Ð°Ð»Ð¾Ð³Ð¾Ð¼
 $loader->addPsr4( 'Krokhmal\\Soft\\', __DIR__ . '/lib/Krokhmal-Soft/');
 
-var_dump(DbConfig::DB_CONFIG_PARAMS);
+$db_driver = new DbDriverPdo(DbConfig::DB_CONFIG_PARAMS);
+$tr = new MysqlTaskRepository($db_driver);
+$task = $tr->findById('c8791555-b462-433b-925a-f8946bd608cd');
+$task->setPriority(2);
+$tr->save($task);
 //echo UUID::generateV4();
