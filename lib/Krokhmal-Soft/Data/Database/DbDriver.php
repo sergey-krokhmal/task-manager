@@ -1,6 +1,6 @@
 <?php
+namespace Krokhmal\Soft\Data\Database;
 
-// DB 
 abstract class DbDriver
 {
 	// -Data-
@@ -19,22 +19,27 @@ abstract class DbDriver
 	// -Behavior-
 	
 	// Construct the DBDriver
-	public function __construct($params){}
+	public function __construct($params)
+    {
+    }
 	
 	// Execute user sql query to DB with return of result resource
-	public function run($sql_query){
+	public function run($sql_query)
+    {
 		$this->sql_query = $sql_query;		// Save last user sql query
 		return $this->query($sql_query);	// Execute query and return query resource
 	}
 	
 	// Get first select row of sql_query as assoc array
-	public function selectFirst($sql_query){
+	public function selectFirst($sql_query)
+    {
 		$this->executeQuery($sql_query); // Execute query
 		return $this->row($this->resource);			// Get one next row (first) and return it
 	}
 	
 	// Get assoc array of select result assoc rows by sql query (not best implementation, may to override)
-	public function selectArray($sql_query){
+	public function selectArray($sql_query)
+    {
 		$this->executeQuery($sql_query); // Execute query
 		$arr = array();								// Result array
 		while ($row = $this->row($this->resource)) {	// Fetch evry row and push to result array
@@ -77,13 +82,13 @@ abstract class DbDriver
 	}
 	
 	// Get next row of statement resource 
-	public abstract function nextRow($resource);
+	abstract public function nextRow($resource);
 	
 	// Get total count of select rows by query resource
-	public abstract function rowCount($resource);
+	abstract public function rowCount($resource);
 	
 	// Get last Id
-	public abstract function lastId($resource);
+	abstract public function lastId($resource);
 	
 	// Get last executed query
 	public function lastQuery(){
@@ -91,16 +96,16 @@ abstract class DbDriver
 	}
 	
 	// Fetch select row as assoc array
-	protected abstract function row($resource);
+	abstract protected function row($resource);
 	
 	// Abstract query to DB
-	protected abstract function query($sql_query);
+	abstract protected function query($sql_query);
 	
 	// Abstract function of connection create
-	public abstract function createConnection();
+	abstract public function createConnection();
 	
 	// Abstract closing of connection
-	public abstract function closeConnection();
+	abstract public function closeConnection();
 	
 }
 ?>

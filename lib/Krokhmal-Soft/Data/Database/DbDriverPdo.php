@@ -1,6 +1,7 @@
 <?php
-namespace Krokhmal\Soft\Data\Database
-require_once("DbDriver.php");	// Import abstract DbDriver class
+namespace Krokhmal\Soft\Data\Database;
+
+use \PDO;
 
 // Implementation of DbDriver with PDO dirver
 class DbDriverPdo extends DbDriver{
