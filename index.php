@@ -23,9 +23,24 @@ preg_match($api_spec, $url_query, $matches_params);
 
 $controller_name = $matches[1].'ApiController';
 $method_name = $matches[3];
-$params = json_decode(urldecode($matches_params[0]),true);
+//$params = json_decode(urldecode($matches_params[0]),true);
+$params = array();
+$row_json = file_get_contents('php://input');
+if ($row_json === false){
+    //return false;
+} else {
+    $json_obj = json_decode($row_json, true);
+    if ($json_obj === null){
+        //return false;
+    } else {
+        $params = $json_obj;
+    }
+}
 
-header('Content-type: application/json; charset=UTF-8');
+header('Content-Type: application/json;');
+header("Access-Control-Allow-Headers: Access-Control-Allow-Headers, Origin, Accept, X-Requested-With, Content-Type, Access-Control-Request-Method, Access-Control-Request-Headers");
+header("Access-Control-Allow-Origin: *");
+header("Access-Control-Allow-Methods: GET, POST, PUT, DELETE, OPTIONS");
 
 if (class_exists($controller_name)) {
     if ($method_name == '' || $method_name == 'index') {
@@ -128,7 +143,11 @@ class TasksApiController
         $params['uuid'] = $uuid;
         $params['status'] = TaskStatus::ACTIVE;
         $task = Task::createFromAssoc($params);
-        $result = $this->repository->save($task);
+        if($this->repository->save($task)) {
+            $result = $task->toAssoc();
+        } else {
+            $result = false;
+        }
         return $result;
     }
     
