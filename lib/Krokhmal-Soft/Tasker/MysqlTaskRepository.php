@@ -19,7 +19,7 @@ class MysqlTaskRepository implements TaskRepository
         $task_arr = array();
         $task_rows = $this->db->selectArray("SELECT * FROM `task` ORDER BY id_priority");
         foreach($task_rows as $task_row) {
-            $task_row['tags'] = explode('|', $task_row['tags']);
+            $task_row['tags'] = $task_row['tags'] == '' ? array() : explode('|', $task_row['tags']);
             $task_row['status'] = $task_row['id_status'];
             $task_row['priority'] = $task_row['id_priority'];
             $task_arr[] = Task::createFromAssoc($task_row);
