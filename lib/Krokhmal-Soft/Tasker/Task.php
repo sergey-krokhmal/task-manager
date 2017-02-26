@@ -5,9 +5,9 @@ class Task
 {
     private $name;
     private $uuid;
-    private $priority;
-    private $tags;
-    private $status;
+    private $priority = 1;
+    private $tags = array();
+    private $status = 1;
     
     public function __construct($uuid, $name, $priority, $status, $tags)
     {
