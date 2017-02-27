@@ -124,6 +124,37 @@ class TasksApiController
         return $tasks_assoc;
     }
     
+    // POST Tasks/filter
+    public function filter($params)
+    {
+        $tasks = $this->repository->getAll();
+        $tasks_assoc = array();
+        $status = $params['status'];
+        $priority = $params['priority'];
+        foreach($tasks as $task) {
+            $tasks_assoc[] = $task->toAssoc();
+        }
+        if ($status != '' && $status > 0){
+            $result_tasks = array();
+            foreach($tasks_assoc as $task) {
+                if ($task['status'] == $status) {
+                    $result_tasks[] = $task;
+                }
+            }
+            $tasks_assoc = $result_tasks;
+        }
+        if ($priority != '' && $priority > 0){
+            $result_tasks = array();
+            foreach($tasks_assoc as $task) {
+                if ($task['priority'] == $priority) {
+                    $result_tasks[] = $task;
+                }
+            }
+            $tasks_assoc = $result_tasks;
+        }
+        return $tasks_assoc;
+    }
+    
     public function getAll()
     {
         $this->index();
