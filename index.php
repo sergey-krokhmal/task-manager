@@ -1,206 +1,26 @@
 <?php
-use Krokhmal\Soft\Helpers\UUID;
-use Krokhmal\Soft\Tasker\MysqlTaskRepository;
-use Krokhmal\Soft\Data\Database\DbDriverPdo;
-use Krokhmal\Soft\Tasker\DbConfig;
-use Krokhmal\Soft\Tasker\Task;
-use Krokhmal\Soft\Tasker\TaskStatus;
+use Krokhmal\Soft\Data\IOStream;
+use Krokhmal\Soft\Tasker\TaskerApiEngine;
 
 // Добавить автозагрузчик
 $loader = require (__DIR__ . '/vendor/autoload.php');
 // Установка соответсвия префикса пространства имен с его базовым каталогом
 $loader->addPsr4( 'Krokhmal\\Soft\\', __DIR__ . '/lib/Krokhmal-Soft/');
 
-$http_method = $_SERVER['REQUEST_METHOD'];
-$url_path = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
-$url_query = parse_url($_SERVER['REQUEST_URI'], PHP_URL_QUERY);
+// Получить JSON потока input в массив
+$assoc_params = IOStream::getAssocJsonInput();
 
-$api_spec = '~^/([a-zA-Z0-9_\-]+)(/([a-zA-Z0-9_\-]+))?.*$~';
-preg_match($api_spec, $url_path, $matches);
-
-$api_spec = '~(?<=^params=)(\{.*\})$~';
-preg_match($api_spec, $url_query, $matches_params);
-
-$controller_name = $matches[1].'ApiController';
-$method_name = $matches[3];
-//$params = json_decode(urldecode($matches_params[0]),true);
-$params = array();
-$row_json = file_get_contents('php://input');
-if ($row_json === false){
-    //return false;
-} else {
-    $json_obj = json_decode($row_json, true);
-    if ($json_obj === null){
-        //return false;
-    } else {
-        $params = $json_obj;
-    }
-}
-
-header('Content-Type: application/json;');
-header("Access-Control-Allow-Headers: Access-Control-Allow-Headers, Origin, Accept, X-Requested-With, Content-Type, Access-Control-Request-Method, Access-Control-Request-Headers");
+// Настроить заголовки на получение HTTP запросов и отправку JSON
+header("Content-Type: application/json;");
+$header_access_allow_header = "Access-Control-Allow-Headers, Origin, Accept,";
+$header_access_allow_header .= "X-Requested-With, Content-Type, Access-Control-Request-Method,";
+$header_access_allow_header .= "Access-Control-Request-Headers";
+header("Access-Control-Allow-Headers: ".$header_access_allow_header);
 header("Access-Control-Allow-Origin: *");
 header("Access-Control-Allow-Methods: GET, POST, PUT, DELETE, OPTIONS");
 
-if (class_exists($controller_name)) {
-    if ($method_name == '' || $method_name == 'index') {
-        $controller = new $controller_name();
-        echo json_encode($controller->index());
-    } elseif (method_exists($controller_name, $method_name)) {
-        $controller = new $controller_name();
-        echo json_encode($controller->$method_name($params));
-    }
-}
+// Создать экземпляр API движка "Задачника", передав окончание контроллеров
+$apiEngine = new TaskerApiEngine('ApiController');
 
-abstract class ApiEngine
-{
-    protected $http_method;
-    protected $url_path;
-    protected $url_params;
-    
-    public function __construct($http_method, $url_path, $url_params)
-    {
-        $this->http_method = $http_method;
-        $this->url_path = $url_path;
-        $this->url_params = $url_params;
-    }
-    
-    public function getController()
-    {
-        $api_spec = '~^/([a-zA-Z0-9_\-]+)(/([a-zA-Z0-9_\-]+))?.*$~';
-        preg_match($api_spec, $url_path, $matches);
-        echo "<pre>";
-        var_dump($matches);
-        echo "</pre>";
-
-        $api_spec = '~(?<=^params=)(\{.*\})$~';
-        preg_match($api_spec, $url_query, $matches);
-        echo "<pre>";
-        var_dump(json_decode(urldecode($matches[0]), true));
-        echo "</pre>";
-    }
-}
-
-class TaskerApiEngine
-{
-    protected $http_method;
-    protected $url_path;
-    protected $url_params;
-    
-    public function __construct($http_method, $url_path, $url_params)
-    {
-        $this->http_method = $http_method;
-        $this->url_path = $url_path;
-        $this->url_params = $url_params;
-    }
-    
-}
-
-
-interface ApiController
-{
-    
-}
-
-class TasksApiController
-{
-    private $db;
-    private $repository;
-    
-    public function __construct()
-    {
-        $this->db = new DbDriverPdo(DbConfig::DB_CONFIG_PARAMS);
-        $this->repository = new MysqlTaskRepository($this->db);
-    }
-    
-    // GET Tasks
-    public function index()
-    {
-        $tasks = $this->repository->getAll();
-        $tasks_assoc = array();
-        foreach($tasks as $task) {
-            $tasks_assoc[] = $task->toAssoc();
-        }
-        return $tasks_assoc;
-    }
-    
-    // POST Tasks/filter
-    public function filter($params)
-    {
-        $tasks = $this->repository->getAll();
-        $tasks_assoc = array();
-        $status = $params['status'];
-        $priority = $params['priority'];
-        foreach($tasks as $task) {
-            $tasks_assoc[] = $task->toAssoc();
-        }
-        if ($status != '' && $status > 0){
-            $result_tasks = array();
-            foreach($tasks_assoc as $task) {
-                if ($task['status'] == $status) {
-                    $result_tasks[] = $task;
-                }
-            }
-            $tasks_assoc = $result_tasks;
-        }
-        if ($priority != '' && $priority > 0){
-            $result_tasks = array();
-            foreach($tasks_assoc as $task) {
-                if ($task['priority'] == $priority) {
-                    $result_tasks[] = $task;
-                }
-            }
-            $tasks_assoc = $result_tasks;
-        }
-        return $tasks_assoc;
-    }
-    
-    public function getAll()
-    {
-        $this->index();
-    }
-    
-    // GET Tasks/getById?params={"uuid": "..."}
-    public function findById($params)
-    {
-        $task = $this->repository->findById($params['uuid']);
-        return $task->toAssoc();
-    }
-    
-    // POST Tasks/add?params={"name": "task_name", "priority": 1, ...}
-    public function add($params)
-    {
-        $uuid = UUID::generateV4();
-        $params['uuid'] = $uuid;
-        $params['status'] = TaskStatus::ACTIVE;
-        $task = Task::createFromAssoc($params);
-        if($this->repository->save($task)) {
-            $result = $task->toAssoc();
-        } else {
-            $result = false;
-        }
-        return $result;
-    }
-    
-    // PUT Tasks/update?params={"uuid": "...", "name": "task_name", ...}
-    public function update($params)
-    {
-        $task = Task::createFromAssoc($params);
-        $result = $this->repository->save($task);
-        return $result;
-    }
-    
-    // DELETE Tasks/remove?params={"uuid": "..."}
-    public function remove($params)
-    {
-        $task = Task::createFromAssoc($params);
-        $result = $this->repository->remove($task);
-        return $result;
-    }
-    
-    function __destruct() {
-        if (isset($this->db)){             //Если было установленно соединение с базой,
-            $this->db->closeConnection();  //то закрываем его когда наш объект больше не нужен
-        }
-    }
-}
+// Выполнить запрос, передав HTTP метод, запрашиваемый URI и параметры
+$apiEngine->executeRequest($_SERVER['REQUEST_METHOD'], $_SERVER['REQUEST_URI'], $assoc_params);

@@ -1,15 +1,19 @@
 <?php
 namespace Krokhmal\Soft\Tasker;
 
+use Krokhmal\Soft\Data\Value;
+use Krokhmal\Soft\Data\UUID;
+
+// Задача
 class Task
 {
     private $name;
     private $uuid;
-    private $priority = 1;
+    private $priority = new TaskPriority(TaskPriority::LOW);
     private $tags = array();
-    private $status = 1;
+    private $status = new TaskStatus(TaskStatus::ACTIVE);
     
-    public function __construct($uuid, $name, $priority, $status, $tags)
+    public function __construct(Value $uuid, Value $name, Value $priority, Value $status, $tags)
     {
         $this->uuid = $uuid;
         $this->name = $name;
@@ -18,62 +22,65 @@ class Task
         $this->status = $status;
     }
     
+    // Создать задачу из ассоциативного масссива
     public static function createFromAssoc($assoc)
     {
         $task = new Task(
-            $assoc['uuid'],
-            $assoc['name'],
-            $assoc['priority'],
-            $assoc['status'],
+            new UUID($assoc['uuid']),
+            new TaskName($assoc['name']),
+            new TaskPriority($assoc['priority']),
+            new TaskStatus($assoc['status']),
             $assoc['tags']
         );
         return $task;
     }
     
+    // Преобразовать задачу в ассоциативный массив
     public function toAssoc()
     {
         $assoc = array();
-        $assoc['uuid'] = $this->uuid;
-        $assoc['name'] = $this->name;
-        $assoc['priority'] = $this->priority;
-        $assoc['status'] = $this->status;
+        $assoc['uuid'] = $this->uuid->get();
+        $assoc['name'] = $this->name->get();
+        $assoc['priority'] = $this->priority->get();
+        $assoc['status'] = $this->status->get();
         $assoc['tags'] = $this->tags;
         return $assoc;
     }
     
+    // Геттеры и сеттеры параметров задачи
     public function getName()
     {
-        return $this->name;
+        return $this->name->get();
     }
     
     public function setName($name)
     {
-       $this->name = $name;
+       $this->name->set($name);
     }
     
     public function getUuid()
     {
-        return $this->uuid;
+        return $this->uuid->get();
     }
     
     public function getPriority()
     {
-        return $this->priority;
+        return $this->priority->get();
     }
     
     public function setPriority($priority)
     {
-        $this->priority = $priority;
+        $this->priority->set($priority);
     }
     
     public function getStatus()
     {
-        return $this->status;
+        return $this->status->get();
     }
     
     public function setStatus($status)
     {
-        $this->status = $status;
+        $this->status->set($status);
     }
     
     public function getTags()

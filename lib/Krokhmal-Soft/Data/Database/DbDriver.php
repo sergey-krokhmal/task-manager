@@ -37,7 +37,8 @@ abstract class DbDriver
 		return $this->row($this->resource);			// Get one next row (first) and return it
 	}
 	
-	// Get assoc array of select result assoc rows by sql query (not best implementation, may to override)
+	// Get assoc array of select result assoc rows 
+    // by sql query (not best implementation, may to override)
 	public function selectArray($sql_query)
     {
 		$this->executeQuery($sql_query); // Execute query
@@ -111,4 +112,3 @@ abstract class DbDriver
 	// Abstract closing of connection
 	abstract public function closeConnection();
 }
-?>

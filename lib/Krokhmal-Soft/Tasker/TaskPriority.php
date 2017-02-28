@@ -1,7 +1,10 @@
 <?php
 namespace Krokhmal\Soft\Tasker;
 
-class TaskPriority
+use Krokhmal\Soft\Data\Value;
+
+// Приоритет задачи
+class TaskPriority extends Value
 {    
     const LOW = 1;
     const MIDDLE = 2;

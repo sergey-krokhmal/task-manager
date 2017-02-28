@@ -5,15 +5,17 @@ use Krokhmal\Soft\Data\TaskRepository;
 use Krokhmal\Soft\Data\Database\DbDriver;
 use Krokhmal\Soft\Data\Database\DbDriverPdo;
 
+// Mysql репозиторий для работы с задачами
 class MysqlTaskRepository implements TaskRepository
 {
-    protected $db;
+    protected $db;  // Драйвер БД
     
     public function __construct(DbDriver $db)
     {
-        $this->db = $db;
+        $this->db = $db;    // Инъекция драйвера БД
     }
     
+    // Получить все задачи из БД
     public function getAll()
     {
         $task_arr = array();
@@ -27,6 +29,7 @@ class MysqlTaskRepository implements TaskRepository
         return $task_arr;
     }
     
+    // Получить задачу по uuid
     public function findById($uuid)
     {
         if (is_string($uuid)) {
@@ -45,6 +48,7 @@ class MysqlTaskRepository implements TaskRepository
         }
     }
     
+    // Сохранить задачу
     public function save(Task $task)
     {
         if (!isset($task)) {
@@ -75,6 +79,7 @@ class MysqlTaskRepository implements TaskRepository
         }
     }
     
+    // Удалить задачу
     public function remove(Task $task)
     {
         if (!isset($task)) {

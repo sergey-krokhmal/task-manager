@@ -96,7 +96,8 @@ class DbDriverPdo extends DbDriver{
 			$this->pass,				// Set password
 			array(
 				// Usage of persistent connection (true - yes, false - no)
-				PDO::ATTR_PERSISTENT => isset($this->params['persistent']) ? $this->params['persistent']: false
+				PDO::ATTR_PERSISTENT => 
+                    isset($this->params['persistent']) ? $this->params['persistent']: false
 			)
 		);
 	}
@@ -107,5 +108,3 @@ class DbDriverPdo extends DbDriver{
 		unset($this->dbh);		// Unset PDO handler
 	}
 }
-
-?>
