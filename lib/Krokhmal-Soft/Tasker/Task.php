@@ -9,9 +9,9 @@ class Task
 {
     private $name;
     private $uuid;
-    private $priority = new TaskPriority(TaskPriority::LOW);
+    private $priority;
     private $tags = array();
-    private $status = new TaskStatus(TaskStatus::ACTIVE);
+    private $status;
     
     public function __construct(Value $uuid, Value $name, Value $priority, Value $status, $tags)
     {
